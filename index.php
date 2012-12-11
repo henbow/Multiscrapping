@@ -25,13 +25,12 @@ function multiscrappingcurl($urls, $options = array()) {
 	}
 	
 	curl_multi_close($mh);
-	
-	$scrap_data = $results;
+
 	$dom = new DOMDocument();
 	$dom->preserveWhiteSpace = false;
 	$scrap = array();
 	$index = 0;
-	foreach($scrap_data as $html) {
+	foreach($results as $html) {
 		$dom->loadHTML($html);
 		$title = $dom->getElementsByTagName('title');
 		$domxpath = new DOMXPath($dom);
