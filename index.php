@@ -48,7 +48,8 @@ foreach($scrap_data as $html) {
 	$description = $domxpath->query('//meta[@name="description"]');
 	
 	for ($i = 0; $i < $title->length; $i++) {
-		$scrap[$index]['title']   = $title->item($i)->nodeValue;
+		$scrap[$index]['url'] = $doc_to_parse[$i];
+		$scrap[$index]['title'] = $title->item($i)->nodeValue;
 		$scrap[$index]['keyword'] = $keyword->item($i)->getAttribute('content');
 		$scrap[$index]['description'] = $description->item($i)->getAttribute('content');
 	}
