@@ -36,7 +36,7 @@ $doc_to_parse = array(
 
 $scrap_data = multiscrappingcurl($doc_to_parse, array(CURLOPT_RETURNTRANSFER => TRUE));
 $dom = new DOMDocument();
-$doc->preserveWhiteSpace = false;
+$dom->preserveWhiteSpace = false;
 $scrap = array();
 $index = 0;
 foreach($scrap_data as $html) {
