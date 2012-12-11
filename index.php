@@ -25,7 +25,30 @@ function multiscrappingcurl($urls, $options = array()) {
     }
     curl_multi_close($mh);
 	
-    return $results;
+	$scrap_data = $results; //multiscrappingcurl($doc_to_parse, array(CURLOPT_RETURNTRANSFER => TRUE));
+	$dom = new DOMDocument();
+	$dom->preserveWhiteSpace = false;
+	$scrap = array();
+	$index = 0;
+	foreach($scrap_data as $html) {
+		$dom->loadHTML($html);
+		$title = $dom->getElementsByTagName('title');
+		$domxpath = new DOMXPath($dom);
+		$title = $domxpath->query('//title');
+		$keyword = $domxpath->query('//meta[@name="keywords"]');
+		$description = $domxpath->query('//meta[@name="description"]');
+		
+		for ($i = 0; $i < $title->length; $i++) {
+			$scrap[$index]['url'] = $urls[$index];
+			$scrap[$index]['title'] = $title->item($i)->nodeValue;
+			$scrap[$index]['keyword'] = $keyword->item($i)->getAttribute('content');
+			$scrap[$index]['description'] = $description->item($i)->getAttribute('content');
+		}
+		
+		$index++;
+	}
+	
+	return $scrap;
 }
 
 $doc_to_parse = array(
@@ -34,29 +57,6 @@ $doc_to_parse = array(
 	'http://www.tempo.co'
 );
 
-$scrap_data = multiscrappingcurl($doc_to_parse, array(CURLOPT_RETURNTRANSFER => TRUE));
-$dom = new DOMDocument();
-$dom->preserveWhiteSpace = false;
-$scrap = array();
-$index = 0;
-foreach($scrap_data as $html) {
-	$dom->loadHTML($html);
-	$title = $dom->getElementsByTagName('title');
-	$domxpath = new DOMXPath($dom);
-	$title = $domxpath->query('//title');
-	$keyword = $domxpath->query('//meta[@name="keywords"]');
-	$description = $domxpath->query('//meta[@name="description"]');
-	
-	for ($i = 0; $i < $title->length; $i++) {
-		$scrap[$index]['url'] = $doc_to_parse[$index];
-		$scrap[$index]['title'] = $title->item($i)->nodeValue;
-		$scrap[$index]['keyword'] = $keyword->item($i)->getAttribute('content');
-		$scrap[$index]['description'] = $description->item($i)->getAttribute('content');
-	}
-	
-	$index++;
-}
-
 print '<pre>';
-print_r($scrap);
+print_r(multiscrappingcurl($doc_to_parse, array(CURLOPT_RETURNTRANSFER => TRUE)));
 print '</pre>';
